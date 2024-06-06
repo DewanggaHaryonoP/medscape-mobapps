@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
 import '../global_variables.dart';
-import 'signup_screen.dart';
 
-class LoginScreen extends StatefulWidget {
+class SignUpScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   bool _isPasswordVisible = false;
-  bool _rememberMe = false;
+  bool _acceptTerms = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: black,
+      appBar: AppBar(
+        backgroundColor: black,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: white),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Center(
@@ -29,7 +38,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: white,
                 ),
               ),
-              SizedBox(height: 40),
+              SizedBox(height: 20),
+              Text(
+                'Make An Account',
+                style: TextStyle(
+                  fontFamily: bodyFont,
+                  fontSize: 24,
+                  color: white,
+                ),
+              ),
+              SizedBox(height: 20),
               TextField(
                 decoration: InputDecoration(
                   filled: true,
@@ -71,31 +89,38 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 style: TextStyle(color: white, fontFamily: bodyFont),
               ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: _rememberMe,
-                        onChanged: (value) {
-                          setState(() {
-                            _rememberMe = value!;
-                          });
-                        },
-                        activeColor: teal,
-                        checkColor: black,
-                      ),
-                      Text(
-                        'Remember Me',
-                        style: TextStyle(color: white, fontFamily: bodyFont),
-                      ),
-                    ],
+              SizedBox(height: 20),
+              TextField(
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: darkGrey,
+                  hintText: 'Country',
+                  hintStyle: TextStyle(color: white),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
                   ),
-                  Text(
-                    'Forgot Password?',
-                    style: TextStyle(color: teal, fontFamily: bodyFont),
+                ),
+                style: TextStyle(color: white, fontFamily: bodyFont),
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Checkbox(
+                    value: _acceptTerms,
+                    onChanged: (value) {
+                      setState(() {
+                        _acceptTerms = value!;
+                      });
+                    },
+                    activeColor: teal,
+                    checkColor: black,
+                  ),
+                  Expanded(
+                    child: Text(
+                      'Terms and Condition',
+                      style: TextStyle(color: white, fontFamily: bodyFont),
+                    ),
                   ),
                 ],
               ),
@@ -104,7 +129,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Implement login action
+                    if (_acceptTerms) {
+                      // Perform the sign-up action and navigate to login screen
+                      Navigator.pop(context); // Go back to login screen
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Sign Up Successful'),
+                        ),
+                      );
+                    } else {
+                      // Show a message to accept terms and conditions
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content:
+                              Text('Please accept the terms and conditions.'),
+                        ),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: teal,
@@ -114,38 +155,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   child: Text(
-                    'Log In',
+                    'Sign Up',
                     style: TextStyle(
                       color: black,
                       fontFamily: bodyFont,
                       fontSize: 16,
                     ),
                   ),
-                ),
-              ),
-              SizedBox(height: 20),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SignUpScreen()),
-                  );
-                },
-                child: Text(
-                  "Don't have an account? Create Account",
-                  style: TextStyle(color: teal, fontFamily: bodyFont),
-                ),
-              ),
-              SizedBox(height: 10),
-              Text(
-                'Your information is safe and secure.',
-                style: TextStyle(color: white, fontFamily: bodyFont),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: Text(
-                  'Contact Support',
-                  style: TextStyle(color: teal, fontFamily: bodyFont),
                 ),
               ),
             ],

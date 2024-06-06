@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/email_verification_screen.dart';
+import 'screens/signup_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,7 +15,6 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
-      home: EmailVerificationScreen(emailAddress: 'example@example.com'),
     );
   }
 }
