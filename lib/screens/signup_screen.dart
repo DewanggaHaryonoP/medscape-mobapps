@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'email_verification_screen.dart'; // Import the EmailVerificationScreen
 import '../global_variables.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -9,6 +10,17 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   bool _isPasswordVisible = false;
   bool _acceptTerms = false;
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _countryController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _countryController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,144 +39,194 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'Medscape',
-                style: TextStyle(
-                  fontFamily: logoFont,
-                  fontSize: 32,
-                  color: white,
-                ),
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Make An Account',
-                style: TextStyle(
-                  fontFamily: bodyFont,
-                  fontSize: 24,
-                  color: white,
-                ),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: darkGrey,
-                  hintText: 'Email',
-                  hintStyle: TextStyle(color: white),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Medscape',
+                  style: TextStyle(
+                    fontFamily: logoFont,
+                    fontSize: 32,
+                    color: white,
                   ),
                 ),
-                style: TextStyle(color: white, fontFamily: bodyFont),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                obscureText: !_isPasswordVisible,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: darkGrey,
-                  hintText: 'Password',
-                  hintStyle: TextStyle(color: white),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: white,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
+                SizedBox(height: 20),
+                Text(
+                  'Make An Account',
+                  style: TextStyle(
+                    fontFamily: bodyFont,
+                    fontSize: 24,
+                    color: white,
                   ),
                 ),
-                style: TextStyle(color: white, fontFamily: bodyFont),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: darkGrey,
-                  hintText: 'Country',
-                  hintStyle: TextStyle(color: white),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
+                SizedBox(height: 20),
+                Container(
+                  padding: EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: darkGrey,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                ),
-                style: TextStyle(color: white, fontFamily: bodyFont),
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Checkbox(
-                    value: _acceptTerms,
-                    onChanged: (value) {
-                      setState(() {
-                        _acceptTerms = value!;
-                      });
-                    },
-                    activeColor: teal,
-                    checkColor: black,
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Terms and Condition',
-                      style: TextStyle(color: white, fontFamily: bodyFont),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_acceptTerms) {
-                      // Perform the sign-up action and navigate to login screen
-                      Navigator.pop(context); // Go back to login screen
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Sign Up Successful'),
+                  child: Column(
+                    children: <Widget>[
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Email',
+                          style: TextStyle(
+                            color: white,
+                            fontFamily: bodyFont,
+                          ),
                         ),
-                      );
-                    } else {
-                      // Show a message to accept terms and conditions
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content:
-                              Text('Please accept the terms and conditions.'),
+                      ),
+                      SizedBox(height: 5),
+                      TextField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          hintText: 'Email',
+                          hintStyle: TextStyle(color: darkGrey),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: teal,
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    'Sign Up',
-                    style: TextStyle(
-                      color: black,
-                      fontFamily: bodyFont,
-                      fontSize: 16,
-                    ),
+                        style: TextStyle(color: darkGrey, fontFamily: bodyFont),
+                      ),
+                      SizedBox(height: 20),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Password',
+                          style: TextStyle(
+                            color: white,
+                            fontFamily: bodyFont,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      TextField(
+                        controller: _passwordController,
+                        obscureText: !_isPasswordVisible,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          hintText: 'Password',
+                          hintStyle: TextStyle(color: darkGrey),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: darkGrey,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        style: TextStyle(color: darkGrey, fontFamily: bodyFont),
+                      ),
+                      SizedBox(height: 20),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Country',
+                          style: TextStyle(
+                            color: white,
+                            fontFamily: bodyFont,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      TextField(
+                        controller: _countryController,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          hintText: 'Country',
+                          hintStyle: TextStyle(color: darkGrey),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        style: TextStyle(color: darkGrey, fontFamily: bodyFont),
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: _acceptTerms,
+                            onChanged: (value) {
+                              setState(() {
+                                _acceptTerms = value!;
+                              });
+                            },
+                            activeColor: teal,
+                            checkColor: black,
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Terms and Condition',
+                              style:
+                                  TextStyle(color: white, fontFamily: bodyFont),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (_acceptTerms) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EmailVerificationScreen(
+                                    emailAddress: _emailController.text,
+                                  ),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Please accept the terms and conditions.'),
+                                ),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: teal,
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            'Sign Up',
+                            style: TextStyle(
+                              color: black,
+                              fontFamily: bodyFont,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

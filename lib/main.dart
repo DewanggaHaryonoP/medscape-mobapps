@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
+      home: LoginScreen(), // Set LoginScreen as the home screen
     );
   }
 }

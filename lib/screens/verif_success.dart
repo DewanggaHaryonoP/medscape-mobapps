@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import '../global_variables.dart';
-
-void main() {
-  runApp(VerifSuccessApp());
-}
+import 'email_verification_screen.dart'; // Import the VerifSuccessScreen
 
 class VerifSuccessApp extends StatelessWidget {
   @override
@@ -31,6 +28,7 @@ class VerifSuccessScreen extends StatelessWidget {
                   'Medscape',
                   style: TextStyle(
                     fontFamily: logoFont,
+                    fontWeight: FontWeight.bold,
                     fontSize: 32,
                     color: white,
                   ),
@@ -59,20 +57,18 @@ class VerifSuccessScreen extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () {
                           // Define the action for the button, e.g. navigate to home screen
-                          
                           Navigator.pop(context);
                         },
                         child: Text('Back to Home'),
                         style: ElevatedButton.styleFrom(
-                          
                           backgroundColor: Colors.blue, // Button color
                           foregroundColor: white, // Text color
                         ),
                       ),
-                    ]
-                  )
-                )
-              )
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
