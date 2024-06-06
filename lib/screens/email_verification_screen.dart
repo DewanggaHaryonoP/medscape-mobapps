@@ -25,7 +25,7 @@ class EmailVerificationScreen extends StatelessWidget {
             ),
             SizedBox(height: 32),
             Icon(
-              Icons.email_outlined,
+              Icons.mark_email_read_outlined,
               size: 80,
               color: Colors.white,
             ),
@@ -39,32 +39,73 @@ class EmailVerificationScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16),
-            Text(
-              'We’ve sent an email to $emailAddress to verify your email address and activate your account. The link in the email will expire in 24 hours.',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
+            Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'We’ve sent an email to ',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment.middle,
+                    baseline: TextBaseline.ideographic,
+                    child: GestureDetector(
+                      onTap: () {
+                      },
+                      child: Text(
+                        '$emailAddress',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.tealAccent,
+                        ),
+                      ),
+                    ),
+                  ),
+                  TextSpan(
+                    text: ' to verify your email address and activate your account. The link in the email will expire in 24 hours.',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
               textAlign: TextAlign.center,
             ),
+
             SizedBox(height: 16),
             GestureDetector(
               onTap: () {
                 // Handle click here action
               },
-              child: Text(
-                'Click Here',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.tealAccent,
-                  decoration: TextDecoration.underline,
-                ),
+              child: Column(
+                children: [
+                  Text(
+                    'Click Here',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.tealAccent,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                  Text(
+                    'if you did not receive the email or wants to change email address previously signed up with.',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 32),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal, // Use backgroundColor instead of primary
+                backgroundColor: Colors.cyanAccent,
                 padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -78,13 +119,15 @@ class EmailVerificationScreen extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
+                textAlign: TextAlign.center,
               ),
             ),
             SizedBox(height: 16),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal, // Use backgroundColor instead of primary
+                backgroundColor: Colors.cyanAccent,
                 padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -98,7 +141,9 @@ class EmailVerificationScreen extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
+                textAlign: TextAlign.center,
               ),
             ),
           ],

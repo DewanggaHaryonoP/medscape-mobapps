@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'screens/login_screen.dart';
 import 'screens/email_verification_screen.dart';
 
 void main() {
