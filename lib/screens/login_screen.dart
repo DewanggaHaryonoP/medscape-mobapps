@@ -1,6 +1,11 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../global_variables.dart';
-import 'signup_screen.dart';
+import 'package:medscape/screens/signup_screen.dart';
+import 'package:medscape/screens/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:medscape/auth/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -8,15 +13,97 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _auth = AuthService();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
   bool _isPasswordVisible = false;
   bool _rememberMe = false;
+  bool _isLoading = false;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserEmailPassword();
+  }
+
+  void _loadUserEmailPassword() async {
+    final prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString('email');
+    final password = prefs.getString('password');
+    final rememberMe = prefs.getBool('rememberMe') ?? false;
+
+    if (email != null && password != null && rememberMe) {
+      setState(() {
+        _emailController.text = email;
+        _passwordController.text = password;
+        _rememberMe = rememberMe;
+      });
+    }
+  }
+
+  Future<void> _saveUserEmailPassword() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (_rememberMe) {
+      await prefs.setString('email', _emailController.text);
+      await prefs.setString('password', _passwordController.text);
+      await prefs.setBool('rememberMe', _rememberMe);
+    } else {
+      await prefs.remove('email');
+      await prefs.remove('password');
+      await prefs.remove('rememberMe');
+    }
+  }
+
+  void _login() async {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+
+    setState(() {
+      _error = null;
+      _isLoading = true;
+    });
+
+    try {
+      final user = await _auth.loginUserWithEmailAndPassword(email, password);
+      if (user != null) {
+        log("User Logged In");
+        await _saveUserEmailPassword();
+        Navigator.pushNamed(context, '/home'); // Assuming you have a home route
+      }
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        if (e.code == 'user-not-found') {
+          _error = 'No user found for that email.';
+        } else if (e.code == 'wrong-password') {
+          _error = 'Wrong password provided for that user.';
+        } else {
+          _error = 'Incorrect email or password. Please try again.';
+        }
+        _isLoading = false;
+      });
+      log("Login failed: ${e.message}");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: black,
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Center(
           child: SingleChildScrollView(
             child: Column(
@@ -30,9 +117,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: white,
                   ),
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 Container(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
                     color: darkGrey,
                     borderRadius: BorderRadius.circular(12),
@@ -47,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontSize: 20,
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -58,8 +145,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                       TextField(
+                        controller: _emailController,
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.white,
@@ -72,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         style: TextStyle(color: darkGrey, fontFamily: bodyFont),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -83,8 +171,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                       TextField(
+                        controller: _passwordController,
                         obscureText: !_isPasswordVisible,
                         decoration: InputDecoration(
                           filled: true,
@@ -95,6 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide.none,
                           ),
+                          errorText: _error,
                           suffixIcon: IconButton(
                             icon: Icon(
                               _isPasswordVisible
@@ -111,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         style: TextStyle(color: darkGrey, fontFamily: bodyFont),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -134,40 +224,50 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ],
                           ),
-                          Text(
-                            'Forgot Password?',
-                            style: TextStyle(color: teal, fontFamily: bodyFont),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context,
+                                  '/forgot_password'); // Assuming you have a forgot password route
+                            },
+                            child: Text(
+                              'Forgot Password?',
+                              style:
+                                  TextStyle(color: teal, fontFamily: bodyFont),
+                            ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // Implement login action
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: teal,
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                      const SizedBox(height: 20),
+                      if (_isLoading)
+                        const CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(teal),
+                        )
+                      else
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _login,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: teal,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            'Log In',
-                            style: TextStyle(
-                              color: black,
-                              fontFamily: bodyFont,
-                              fontSize: 16,
+                            child: Text(
+                              'Log In',
+                              style: TextStyle(
+                                color: black,
+                                fontFamily: bodyFont,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
                     Navigator.push(
@@ -180,7 +280,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(color: teal, fontFamily: bodyFont),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   'Your information is safe and secure.',
                   style: TextStyle(color: white, fontFamily: bodyFont),

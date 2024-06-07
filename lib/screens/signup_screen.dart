@@ -1,6 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'email_verification_screen.dart'; // Import the EmailVerificationScreen
-import '../global_variables.dart';
+import 'package:medscape/screens/email_verification_screen.dart'; // Import the EmailVerificationScreen
+import 'package:medscape/global_variables.dart';
+import 'package:medscape/auth/auth_service.dart'; // Import AuthService
+
+import 'package:flutter/material.dart';
+import 'email_verification_screen.dart'; // Import the EmailVerificationScreen
+import 'package:medscape/global_variables.dart';
+import 'package:medscape/auth/auth_service.dart'; // Import AuthService
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -13,6 +21,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _countryController = TextEditingController();
+  bool _isLoading = false; // Track the loading state
+  String? _errorMessage; // Error message
+
+  final AuthService _authService =
+      AuthService(); // Create an instance of AuthService
 
   @override
   void dispose() {
@@ -20,6 +33,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _passwordController.dispose();
     _countryController.dispose();
     super.dispose();
+  }
+
+  Future<void> _signup() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final userCredential = await _authService.createUserWithEmailAndPassword(
+        _emailController.text,
+        _passwordController.text,
+      );
+      final user = userCredential?.user;
+      if (user != null) {
+        await user.sendEmailVerification();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EmailVerificationScreen(
+              emailAddress: _emailController.text,
+            ),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _errorMessage = e.message;
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -183,28 +230,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ],
                       ),
                       SizedBox(height: 20),
+                      _errorMessage != null
+                          ? Text(
+                              _errorMessage!,
+                              style: TextStyle(color: Colors.red),
+                            )
+                          : Container(),
+                      SizedBox(height: 20),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            if (_acceptTerms) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EmailVerificationScreen(
-                                    emailAddress: _emailController.text,
-                                  ),
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      'Please accept the terms and conditions.'),
-                                ),
-                              );
-                            }
-                          },
+                          onPressed: _isLoading
+                              ? null
+                              : () {
+                                  if (_acceptTerms) {
+                                    _signup();
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            'Please accept the terms and conditions.'),
+                                      ),
+                                    );
+                                  }
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: teal,
                             padding: EdgeInsets.symmetric(vertical: 16),
@@ -212,14 +261,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: Text(
-                            'Sign Up',
-                            style: TextStyle(
-                              color: black,
-                              fontFamily: bodyFont,
-                              fontSize: 16,
-                            ),
-                          ),
+                          child: _isLoading
+                              ? CircularProgressIndicator(
+                                  valueColor:
+                                      AlwaysStoppedAnimation<Color>(black),
+                                )
+                              : Text(
+                                  'Sign Up',
+                                  style: TextStyle(
+                                    color: black,
+                                    fontFamily: bodyFont,
+                                    fontSize: 16,
+                                  ),
+                                ),
                         ),
                       ),
                     ],

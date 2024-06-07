@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medscape/screens/login_screen.dart';
 import '../global_variables.dart';
 import 'email_verification_screen.dart'; // Import the VerifSuccessScreen
 
@@ -57,9 +58,14 @@ class VerifSuccessScreen extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () {
                           // Define the action for the button, e.g. navigate to home screen
-                          Navigator.pop(context);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginScreen()),
+                          );
+                          ;
                         },
-                        child: Text('Back to Home'),
+                        child: Text('Back to Log in'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue, // Button color
                           foregroundColor: white, // Text color
