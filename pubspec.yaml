@@ -92,6 +92,14 @@ flutter:
   assets:
     - assets/icons/success.png
     - assets/icons/success1.png
+    - assets/icons/unlock.png
+    - assets/icons/unlock1.png
+    - assets/icons/recent.png
+    - assets/icons/recent1.png
+    - assets/icons/info.png
+    - assets/icons/info1.png
+    - assets/icons/roundcast.png
+    - assets/icons/roundcast1.png
   fonts:
     - family: Metafiz Demo
       fonts:
