@@ -2,65 +2,106 @@ import 'package:flutter/material.dart';
 import '../global_variables.dart';
 import 'articles_screen.dart'; // Import the ArticlesPage
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedTopIndex = 0;
+  int _selectedIndex = 0;
+
+  void _onTopItemTapped(int index) {
+    setState(() {
+      _selectedTopIndex = index;
+    });
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ArticlesPage()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: darkGrey,
+      backgroundColor: grey,
       appBar: AppBar(
-        backgroundColor: black,
+        automaticallyImplyLeading: false,
+        backgroundColor: darkBlue, // darklightblue
         elevation: 0,
+        toolbarHeight: 80, // Adjust the height of the AppBar
         title: Row(
           children: [
-            Icon(Icons.person, color: white),
+            Icon(Icons.person, color: teal, size: 30), // teal and bigger
+            Spacer(), // Add space before the search bar
             Expanded(
-              child: TextField(
-                style: TextStyle(color: white, fontFamily: bodyFont),
-                decoration: InputDecoration(
-                  hintText: 'Search Here...',
-                  hintStyle: TextStyle(color: white, fontFamily: bodyFont),
-                  border: InputBorder.none,
-                  prefixIcon: Icon(Icons.search, color: white),
+              flex:
+                  4, // Adjust the flex value to control the width of the search bar
+              child: Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 4.0,
+                      offset: Offset(2.0, 2.0),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  style: TextStyle(color: grey, fontFamily: bodyFont),
+                  decoration: InputDecoration(
+                    hintText: 'Search Here...',
+                    hintStyle: TextStyle(color: grey, fontFamily: bodyFont),
+                    border: InputBorder.none,
+                    prefixIcon: Icon(Icons.search, color: grey),
+                    filled: true,
+                    fillColor: darklightblue, // darkblue
+                  ),
                 ),
               ),
             ),
+            Spacer(), // Add space after the search bar
             IconButton(
-              icon: Icon(Icons.mail, color: white),
+              icon: Icon(Icons.mail, color: teal, size: 30), // teal and bigger
               onPressed: () {},
             ),
           ],
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'For You',
-                  style: TextStyle(
-                      color: white, fontFamily: bodyFont, fontSize: 18),
-                ),
-                Row(
-                  children: [
-                    Text(
-                      'Medscape Today',
-                      style: TextStyle(
-                          color: teal, fontFamily: bodyFont, fontSize: 18),
-                    ),
-                    SizedBox(width: 10),
-                    Text(
-                      'Customize Topics',
-                      style: TextStyle(
-                          color: white, fontFamily: bodyFont, fontSize: 18),
-                    ),
-                  ],
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.only(
+                  bottom: 16.0, top: 16.0), // Padding from top
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildTopNavItem('For You', 0),
+                  _buildTopNavItem('Medscape Today', 1),
+                  Row(
+                    children: [
+                      Icon(Icons.edit, color: teal, size: 18), // Pencil icon
+                      SizedBox(width: 5),
+                      Text(
+                        'Customize Topics',
+                        style: TextStyle(
+                            color: teal, fontFamily: bodyFont, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-            SizedBox(height: 16),
             Container(
               height: 150,
               color: Colors.grey, // Placeholder for the ad container
@@ -68,7 +109,7 @@ class HomeScreen extends StatelessWidget {
                 child: Text(
                   'Ad Space',
                   style: TextStyle(
-                      color: white, fontFamily: bodyFont, fontSize: 18),
+                      color: Colors.white, fontFamily: bodyFont, fontSize: 12),
                 ),
               ),
             ),
@@ -77,49 +118,68 @@ class HomeScreen extends StatelessWidget {
               child: ListView.builder(
                 itemCount: 4, // Adjust based on the number of items
                 itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Container(
-                      color: darkGrey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 150,
-                            color: Colors.grey, // Placeholder for the image
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'News title goes here like this\nNews title goes here like this',
-                              style:
-                                  TextStyle(color: white, fontFamily: bodyFont),
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  return Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
                               children: [
-                                Text(
-                                  'Medscape Medical News | 4 June 2024',
-                                  style: TextStyle(
-                                      color: white, fontFamily: bodyFont),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'News title goes here like this\nNews title goes here like this',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: bodyFont,
+                                              fontSize: 16),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          'Medscape Medical News | 4 June 2024',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: bodyFont,
+                                              fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                Row(
-                                  children: [
-                                    Icon(Icons.bookmark_border, color: white),
-                                    SizedBox(width: 10),
-                                    Icon(Icons.share, color: white),
-                                  ],
+                                Container(
+                                  height: 100,
+                                  width: 100,
+                                  color:
+                                      Colors.grey, // Placeholder for the image
                                 ),
                               ],
                             ),
-                          ),
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Icon(Icons.bookmark_border, color: teal),
+                                  SizedBox(width: 10),
+                                  Icon(Icons.share, color: teal),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+                      Divider(
+                        color: Colors.grey,
+                        thickness: 1.5, // Line break thickness
+                      ), // Line break between articles
+                    ],
                   );
                 },
               ),
@@ -127,32 +187,89 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: black,
-        selectedItemColor: teal,
-        unselectedItemColor: white,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF536976), Color(0xFF292E49)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.article),
-            label: 'Article',
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(8),
+            topRight: Radius.circular(8),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.local_pharmacy),
-            label: 'Drugs',
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 10.0,
+              offset: Offset(0, -2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            _buildNavItem(Icons.home, 'Home', 0),
+            _buildNavItem(Icons.article, 'Article', 1),
+            _buildNavItem(Icons.local_pharmacy, 'Drugs', 2),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopNavItem(String label, int index) {
+    bool isSelected = _selectedTopIndex == index;
+    return GestureDetector(
+      onTap: () => _onTopItemTapped(index),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 16.0),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.black : teal,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? teal : grey,
+            fontFamily: bodyFont,
+            fontSize: 12, // Adjust the font size here
           ),
-        ],
-        onTap: (index) {
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ArticlesPage()),
-            );
-          }
-        },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(IconData icon, String label, int index) {
+    bool isSelected = _selectedIndex == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => _onItemTapped(index),
+        child: Container(
+          height: 80,
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(isSelected ? 8 : 0),
+              topRight: Radius.circular(isSelected ? 8 : 0),
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 30,
+                color: isSelected ? Color(0xFF008080) : Colors.teal,
+              ),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isSelected ? Color(0xFF008080) : Colors.teal,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
