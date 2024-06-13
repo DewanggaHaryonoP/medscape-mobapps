@@ -27,80 +27,142 @@ class DrugScreenState extends State<DrugsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: darkBlue, // Changed from Colors.teal to darkBlue
+        automaticallyImplyLeading: false,
+        backgroundColor: darkBlue,
+        elevation: 0,
         toolbarHeight: 80.0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context); // Handle back button press
-          },
-        ),
-        title: Container(
-          height: 40.0,
-          child: TextField(
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.blueGrey[900],
-              hintText: 'Search Drugs..',
-              hintStyle: TextStyle(color: Colors.grey[400]),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(25.0),
-                borderSide: BorderSide.none,
-              ),
-              prefixIcon: Icon(Icons.search, color: Colors.grey[400]),
+        title: Row(
+          children: [
+            IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.white, size: 30),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
-            style: TextStyle(color: Colors.white),
-          ),
+            Spacer(),
+            Expanded(
+              flex: 4,
+              child: Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 4.0,
+                      offset: Offset(2.0, 2.0),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  style: TextStyle(color: grey, fontFamily: bodyFont),
+                  decoration: InputDecoration(
+                    hintText: 'Search Drugs..',
+                    hintStyle: TextStyle(color: grey, fontFamily: bodyFont),
+                    border: InputBorder.none,
+                    prefixIcon: Icon(Icons.search, color: grey),
+                    filled: true,
+                    fillColor: darklightblue,
+                  ),
+                ),
+              ),
+            ),
+            Spacer(),
+          ],
         ),
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: grey,
       body: ListView.builder(
         itemCount: 10,
         itemBuilder: (context, index) {
-          return DrugsItem();
+          return Column(
+            children: [
+              DrugsItem(),
+              Divider(
+                color: Colors.grey,
+                thickness: 1.5,
+              ),
+            ],
+          );
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-              color: Colors.cyan,
-            ),
-            label: 'Home',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF536976), Color(0xFF292E49)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.article,
-              color: Colors.cyan,
-            ),
-            label: 'Article',
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(8),
+            topRight: Radius.circular(8),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.local_hospital,
-              color: Colors.cyan,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 10.0,
+              offset: Offset(0, -2),
             ),
-            label: 'Drugs',
-          ),
-        ],
-        backgroundColor: darkBlue, // Changed from Colors.teal to darkBlue
-        currentIndex: 2,
-        selectedItemColor: Colors.white,
-        onTap: (index) {
+          ],
+        ),
+        child: Row(
+          children: [
+            _buildNavItem(Icons.home, 'Home', 0, context),
+            _buildNavItem(Icons.article, 'Article', 1, context),
+            _buildNavItem(Icons.local_pharmacy, 'Drugs', 2, context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(
+      IconData icon, String label, int index, BuildContext context) {
+    bool isSelected = index == 2;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
           if (index == 0) {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => HomeScreen()),
             );
-          }
-          else if (index == 1) {
+          } else if (index == 1) {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ArticlesPage()),
             );
+          } else if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DrugsScreen()),
+            );
           }
         },
+        child: Container(
+          height: 80,
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(isSelected ? 8 : 0),
+              topRight: Radius.circular(isSelected ? 8 : 0),
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 30,
+                color: isSelected ? Color(0xFF008080) : Colors.teal,
+              ),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isSelected ? Color(0xFF008080) : Colors.teal,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -116,14 +178,57 @@ class DrugsItem extends StatelessWidget {
           MaterialPageRoute(builder: (context) => DrugInfoPage()),
         );
       },
-      child: Card(
-        color: Colors.grey[850],
-        margin: EdgeInsets.all(2.0),
-        child: ListTile(
-          title: Text(
-            'Drugs name goes here..',
-            style: TextStyle(color: Colors.white),
-          ),
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Drugs name goes here..',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: bodyFont,
+                              fontSize: 16),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'Drug description or additional info here.',
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontFamily: bodyFont,
+                              fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 100,
+                  width: 100,
+                  color: Colors.grey, // Placeholder for the image
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Icon(Icons.bookmark_border, color: teal),
+                  SizedBox(width: 10),
+                  Icon(Icons.share, color: teal),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
