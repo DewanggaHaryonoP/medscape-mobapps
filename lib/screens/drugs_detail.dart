@@ -1,276 +1,161 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'articles_screen.dart';
-import 'home_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../global_variables.dart';
 
-void main() {
-  runApp(MyApp());
-}
+class DrugInfoPage extends StatelessWidget {
+  final String documentId;
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Drug Information',
-      home: DrugInfoPage(),
-    );
-  }
-}
-
-class DrugInfoPage extends StatefulWidget {
-  @override
-  _DrugInfoPageState createState() => _DrugInfoPageState();
-}
-
-class _DrugInfoPageState extends State<DrugInfoPage> {
-  int _selectedTopIndex = 0;
-  int _selectedIndex = 2;
-
-  void _onTopItemTapped(int index) {
-    setState(() {
-      _selectedTopIndex = index;
-    });
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    if (index == 0) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
-    }
-    if (index == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ArticlesPage()),
-      );
-    }if (index == 2) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => DrugInfoPage()),
-      );
-    }
-  }
+  DrugInfoPage({required this.documentId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: darkGrey,
-      appBar: AppBar(
-        backgroundColor: darkBlue,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text(
-          'Medscape',
-            style: TextStyle(
-              fontFamily: logoFont,
-              fontSize: 32,
-              color: white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(70.0),
+        child: AppBar(
+          backgroundColor: darkBlue,
+          elevation: 0,
+          leading: Padding(
+            padding: const EdgeInsets.only(top: 18.0),
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
-        ),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Drug Name',
+          ),
+          title: Padding(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Text(
+              'Medscape',
               style: TextStyle(
-                fontSize: 28,
+                fontFamily: 'Serif',
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
-            SizedBox(
-              height: 8,
-              ),
-            Text(
-              'Alias: ',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),SizedBox(
-              height: 8,
-              ),
-            Text(
-              'Class: ',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-            SizedBox(height: 16.0),
-            Expanded(
-              child: ListView(
-                children: [
-                  ExpansionPanelListExample(),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF536976), Color(0xFF292E49)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(8),
-            topRight: Radius.circular(8),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 10.0,
-              offset: Offset(0, -2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            _buildNavItem(Icons.home, 'Home', 0),
-            _buildNavItem(Icons.article, 'Article', 1),
-            _buildNavItem(Icons.local_pharmacy, 'Drugs', 2),
-          ],
-        ),
-      ),
-    );
-  }
-  Widget _buildTopNavItem(String label, int index) {
-    bool isSelected = _selectedTopIndex == index;
-    return GestureDetector(
-      onTap: () => _onTopItemTapped(index),
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 16.0),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.black : teal,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? teal : grey,
-            fontFamily: bodyFont,
-            fontSize: 12, // Adjust the font size here
           ),
         ),
       ),
+      body: FutureBuilder<DocumentSnapshot>(
+        future:
+            FirebaseFirestore.instance.collection('obat').doc(documentId).get(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}',
+                  style: TextStyle(color: Colors.white)),
+            );
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          final drugData = snapshot.data!;
+          final String name = drugData['name'] ?? '';
+          final String alias = drugData['alias'] ?? '';
+          final String drugClass = drugData['class'] ?? '';
+          final String adverse = drugData['adverse'] ?? '';
+          final String warnings = drugData['warning'] ?? '';
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: TextStyle(
+                    fontFamily: bodyFont,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Alias: $alias',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontFamily: bodyFont,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Class: $drugClass',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontFamily: bodyFont,
+                  ),
+                ),
+                SizedBox(height: 16),
+                _buildExpansionTile(
+                  title: 'Adverse Effects',
+                  content: adverse,
+                ),
+                Divider(color: Colors.white),
+                _buildExpansionTile(
+                  title: 'Warnings',
+                  content: warnings,
+                ),
+                Divider(color: Colors.white),
+              ],
+            ),
+          );
+        },
+      ),
+      backgroundColor: grey,
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, int index) {
-    bool isSelected = _selectedIndex == index;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => _onItemTapped(index),
-        child: Container(
-          height: 80,
-          decoration: BoxDecoration(
-            color: isSelected ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(isSelected ? 8 : 0),
-              topRight: Radius.circular(isSelected ? 8 : 0),
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 30,
-                color: isSelected ? Color(0xFF008080) : Colors.teal,
+  Widget _buildExpansionTile({required String title, required String content}) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        bool isExpanded = false;
+
+        return Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
+            title: Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontFamily: bodyFont,
               ),
-              Text(
-                label,
-                style: TextStyle(
-                  color: isSelected ? Color(0xFF008080) : Colors.teal,
+            ),
+            trailing: Icon(
+              isExpanded ? Icons.arrow_drop_down : Icons.arrow_forward,
+              color: Colors.white,
+            ),
+            onExpansionChanged: (bool expanded) {
+              setState(() {
+                isExpanded = expanded;
+              });
+            },
+            children: [
+              Container(
+                color: grey,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    content,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontFamily: bodyFont,
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class Item {
-  Item({
-    required this.expandedValue,
-    required this.headerValue,
-    this.isExpanded = false,
-  });
-
-  String expandedValue;
-  String headerValue;
-  bool isExpanded;
-}
-
-List<Item> generateItems(int numberOfItems) {
-  return List<Item>.generate(numberOfItems, (int index) {
-    return Item(
-      headerValue: index == 0 ? 'Adverse Effects' : 'Warnings',
-      expandedValue: index == 0
-          ? 'Adverse effects information goes here.'
-          : 'Warnings information goes here.',
-    );
-  });
-}
-
-class ExpansionPanelListExample extends StatefulWidget {
-  const ExpansionPanelListExample({super.key});
-
-  @override
-  State<ExpansionPanelListExample> createState() =>
-      _ExpansionPanelListExampleState();
-}
-
-class _ExpansionPanelListExampleState extends State<ExpansionPanelListExample> {
-  final List<Item> _data = generateItems(2);
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        child: _buildPanel(),
-      ),
-    );
-  }
-
-  Widget _buildPanel() {
-    return ExpansionPanelList(
-      expansionCallback: (int index, bool isExpanded) {
-        setState(() {
-          _data[index].isExpanded = isExpanded;
-        });
-      },
-      children: _data.map<ExpansionPanel>((Item item) {
-        return ExpansionPanel(
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            return ListTile(
-              title: Text(item.headerValue),
-            );
-          },
-          body: ListTile(
-              title: Text(item.expandedValue),
-              ),
-          isExpanded: item.isExpanded,
         );
-      }).toList(),
+      },
     );
   }
 }
