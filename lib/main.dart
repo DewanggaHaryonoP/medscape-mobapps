@@ -4,6 +4,9 @@ import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/premium_offer.dart'; // Import PremiumOfferScreen
+import 'screens/articles_screen.dart';
+import 'screens/drugs_screen.dart';
+import 'screens/bottom_nav_bar.dart'; // Import the BottomNavBar
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,11 +34,44 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => LoginScreen(),
-        '/home': (context) => HomeScreen(),
+        '/home': (context) => MainScreen(),
         '/signup': (context) => SignUpScreen(),
         '/premium_offer': (context) =>
             PremiumOfferScreen(), // Add PremiumOfferScreen route
       },
+    );
+  }
+}
+
+class MainScreen extends StatefulWidget {
+  @override
+  _MainScreenState createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          HomeScreen(),
+          ArticlesPage(),
+          DrugsScreen(),
+        ],
+      ),
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onTap: _onItemTapped,
+      ),
     );
   }
 }

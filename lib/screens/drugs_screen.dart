@@ -1,21 +1,6 @@
 import 'package:flutter/material.dart';
-import 'home_screen.dart'; // Import the HomeScreen
-import 'articles_screen.dart';
 import 'drugs_detail.dart';
-import '../global_variables.dart'; // Ensure the global variables file is imported
-
-void main() {
-  runApp(DrugsScreenApp());
-}
-
-class DrugsScreenApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: DrugsScreen(),
-    );
-  }
-}
+import '../global_variables.dart';
 
 class DrugsScreen extends StatefulWidget {
   @override
@@ -76,81 +61,6 @@ class DrugScreenState extends State<DrugsScreen> {
           return DrugsItem();
         },
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF536976), Color(0xFF292E49)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(8),
-            topRight: Radius.circular(8),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 10.0,
-              offset: Offset(0, -2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            _buildNavItem(Icons.home, 'Home', 0, context),
-            _buildNavItem(Icons.article, 'Article', 1, context),
-            _buildNavItem(Icons.local_pharmacy, 'Drugs', 2, context),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(
-      IconData icon, String label, int index, BuildContext context) {
-    bool isSelected = index == 2;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          if (index == 0) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
-            );
-          } else if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ArticlesPage()),
-            );
-          }
-        },
-        child: Container(
-          height: 80,
-          decoration: BoxDecoration(
-            color: isSelected ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(isSelected ? 8 : 0),
-              topRight: Radius.circular(isSelected ? 8 : 0),
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 30,
-                color: isSelected ? Color(0xFF008080) : Colors.teal,
-              ),
-              Text(
-                label,
-                style: TextStyle(
-                  color: isSelected ? Color(0xFF008080) : Colors.teal,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
@@ -175,6 +85,7 @@ class DrugsItem extends StatelessWidget {
               style: TextStyle(
                   color: Colors.white, fontFamily: bodyFont, fontSize: 16),
             ),
+            SizedBox(height: 8),
           ],
         ),
       ),

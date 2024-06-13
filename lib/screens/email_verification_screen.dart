@@ -266,7 +266,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 child: Text(
                   'Back to log in',
                   style: TextStyle(
-                    color: grey,
+                    color: Colors.black,
                     fontSize: 16,
                   ),
                 ),
