@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../global_variables.dart';
+import 'articles_screen.dart'; // Import the ArticlesPage
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -144,6 +145,14 @@ class HomeScreen extends StatelessWidget {
             label: 'Drugs',
           ),
         ],
+        onTap: (index) {
+          if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ArticlesPage()),
+            );
+          }
+        },
       ),
     );
   }
