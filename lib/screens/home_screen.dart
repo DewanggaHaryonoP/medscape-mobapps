@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../global_variables.dart';
+import 'article_detail.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -61,9 +63,31 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: HomeContent(
-        selectedTopIndex: _selectedTopIndex,
-        onTopItemTapped: _onTopItemTapped,
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('articles')
+            .limit(4)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Error: ${snapshot.error}',
+                style: TextStyle(color: Colors.white),
+              ),
+            );
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          final articles = snapshot.data!.docs;
+
+          return HomeContent(
+            selectedTopIndex: _selectedTopIndex,
+            onTopItemTapped: _onTopItemTapped,
+            articles: articles,
+          );
+        },
       ),
     );
   }
@@ -72,8 +96,13 @@ class _HomeScreenState extends State<HomeScreen> {
 class HomeContent extends StatelessWidget {
   final int selectedTopIndex;
   final Function(int) onTopItemTapped;
+  final List<QueryDocumentSnapshot> articles;
 
-  HomeContent({required this.selectedTopIndex, required this.onTopItemTapped});
+  HomeContent({
+    required this.selectedTopIndex,
+    required this.onTopItemTapped,
+    required this.articles,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -104,9 +133,9 @@ class HomeContent extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: 5,
+              itemCount: articles.length + 1, // +1 for the ad container
               itemBuilder: (context, index) {
-                if (index == 2) {
+                if (index == 1) {
                   return Column(
                     children: [
                       Container(
@@ -129,56 +158,74 @@ class HomeContent extends StatelessWidget {
                     ],
                   );
                 } else {
-                  return Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'News title goes here like this\nNews title goes here like this',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontFamily: bodyFont,
-                                              fontSize: 16),
-                                        ),
-                                        SizedBox(height: 8),
-                                        Text(
-                                          'Medscape Medical News | 4 June 2024',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontFamily: bodyFont,
-                                              fontSize: 12),
-                                        ),
-                                      ],
+                  final articleIndex = index > 1 ? index - 1 : index;
+                  final article = articles[articleIndex];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ArticleDetailPage(
+                            articleId: article.id,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            article['title'],
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: bodyFont,
+                                                fontSize: 16),
+                                          ),
+                                          SizedBox(height: 8),
+                                          Text(
+                                            '${article['author']} | ${article['date']}',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: bodyFont,
+                                                fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Container(
-                                  height: 100,
-                                  width: 100,
-                                  color: Colors.grey,
-                                ),
-                              ],
-                            ),
-                          ],
+                                  Container(
+                                    height: 100,
+                                    width: 100,
+                                    color: Colors.grey,
+                                    child: Image.network(
+                                      'https://via.placeholder.com/100', // Replace with actual image URL from Firestore
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Divider(
-                        color: Colors.grey,
-                        thickness: 1.5,
-                      ),
-                    ],
+                        Divider(
+                          color: Colors.grey,
+                          thickness: 1.5,
+                        ),
+                      ],
+                    ),
                   );
                 }
               },
@@ -202,10 +249,9 @@ class HomeContent extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? teal : grey,
-            fontFamily: bodyFont,
-            fontSize: 12,
-          ),
+              color: isSelected ? teal : grey,
+              fontFamily: bodyFont,
+              fontSize: 12),
         ),
       ),
     );

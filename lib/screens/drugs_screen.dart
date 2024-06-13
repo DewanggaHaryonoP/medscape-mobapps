@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'drugs_detail.dart';
 import '../global_variables.dart';
 
@@ -55,10 +56,32 @@ class DrugScreenState extends State<DrugsScreen> {
         ),
       ),
       backgroundColor: grey,
-      body: ListView.builder(
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return DrugsItem();
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('obat')
+            .orderBy('name')
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData) {
+            return Center(child: Text('No data available'));
+          }
+
+          var drugs = snapshot.data!.docs;
+
+          return ListView.builder(
+            itemCount: drugs.length,
+            itemBuilder: (context, index) {
+              var drug = drugs[index];
+              return DrugsItem(
+                name: drug['name'],
+                documentId: drug.id,
+              );
+            },
+          );
         },
       ),
     );
@@ -66,13 +89,20 @@ class DrugScreenState extends State<DrugsScreen> {
 }
 
 class DrugsItem extends StatelessWidget {
+  final String name;
+  final String documentId;
+
+  DrugsItem({required this.name, required this.documentId});
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => DrugInfoPage()),
+          MaterialPageRoute(
+            builder: (context) => DrugInfoPage(documentId: documentId),
+          ),
         );
       },
       child: Container(
@@ -81,7 +111,7 @@ class DrugsItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Drugs name goes here..',
+              name,
               style: TextStyle(
                   color: Colors.white, fontFamily: bodyFont, fontSize: 16),
             ),
