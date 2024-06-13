@@ -102,85 +102,98 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            Container(
-              height: 150,
-              color: Colors.grey, // Placeholder for the ad container
-              child: Center(
-                child: Text(
-                  'Ad Space',
-                  style: TextStyle(
-                      color: Colors.white, fontFamily: bodyFont, fontSize: 12),
-                ),
-              ),
-            ),
-            SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
-                itemCount: 4, // Adjust based on the number of items
+                itemCount: 5, // Total number of items (4 articles + 1 ad)
                 itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'News title goes here like this\nNews title goes here like this',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontFamily: bodyFont,
-                                              fontSize: 16),
-                                        ),
-                                        SizedBox(height: 8),
-                                        Text(
-                                          'Medscape Medical News | 4 June 2024',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontFamily: bodyFont,
-                                              fontSize: 12),
-                                        ),
-                                      ],
+                  if (index == 2) {
+                    return Column(
+                      children: [
+                        Container(
+                          height: 150,
+                          color:
+                              Colors.grey, // Placeholder for the ad container
+                          child: Center(
+                            child: Text(
+                              'Ad Space',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: bodyFont,
+                                  fontSize: 12),
+                            ),
+                          ),
+                        ),
+                        Divider(
+                          color: Colors.grey,
+                          thickness: 1.5, // Line break thickness
+                        ), // Line break after the ad
+                      ],
+                    );
+                  } else {
+                    return Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'News title goes here like this\nNews title goes here like this',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: bodyFont,
+                                                fontSize: 16),
+                                          ),
+                                          SizedBox(height: 8),
+                                          Text(
+                                            'Medscape Medical News | 4 June 2024',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: bodyFont,
+                                                fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Container(
-                                  height: 100,
-                                  width: 100,
-                                  color:
-                                      Colors.grey, // Placeholder for the image
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Icon(Icons.bookmark_border, color: teal),
-                                  SizedBox(width: 10),
-                                  Icon(Icons.share, color: teal),
+                                  Container(
+                                    height: 100,
+                                    width: 100,
+                                    color: Colors
+                                        .grey, // Placeholder for the image
+                                  ),
                                 ],
                               ),
-                            ),
-                          ],
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Icon(Icons.bookmark_border, color: teal),
+                                    SizedBox(width: 10),
+                                    Icon(Icons.share, color: teal),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Divider(
-                        color: Colors.grey,
-                        thickness: 1.5, // Line break thickness
-                      ), // Line break between articles
-                    ],
-                  );
+                        Divider(
+                          color: Colors.grey,
+                          thickness: 1.5, // Line break thickness
+                        ), // Line break between articles
+                      ],
+                    );
+                  }
                 },
               ),
             ),
@@ -224,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 16.0),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.black : teal,
+          color: isSelected ? darkGrey : teal,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
@@ -259,12 +272,12 @@ class _HomeScreenState extends State<HomeScreen> {
               Icon(
                 icon,
                 size: 30,
-                color: isSelected ? Color(0xFF008080) : Colors.teal,
+                color: isSelected ? teal : teal,
               ),
               Text(
                 label,
                 style: TextStyle(
-                  color: isSelected ? Color(0xFF008080) : Colors.teal,
+                  color: isSelected ? teal : teal,
                 ),
               ),
             ],
