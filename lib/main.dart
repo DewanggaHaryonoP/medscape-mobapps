@@ -1,9 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
-import 'screens/email_verification_screen.dart';
+import 'screens/home_screen.dart';
 import 'screens/signup_screen.dart';
-import 'screens/home_screen.dart'; // Import HomeScreen
+import 'screens/premium_offer.dart'; // Import PremiumOfferScreen
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +33,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => LoginScreen(),
         '/home': (context) => HomeScreen(),
         '/signup': (context) => SignUpScreen(),
-        // '/email_verification': (context) => EmailVerificationScreen(),
+        '/premium_offer': (context) =>
+            PremiumOfferScreen(), // Add PremiumOfferScreen route
       },
     );
   }

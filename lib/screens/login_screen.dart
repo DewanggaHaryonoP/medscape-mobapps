@@ -2,8 +2,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../global_variables.dart';
-import 'package:medscape/screens/signup_screen.dart';
-import 'package:medscape/screens/home_screen.dart';
+import 'signup_screen.dart';
+import 'home_screen.dart';
+import 'premium_offer.dart'; // Import PremiumOfferScreen
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:medscape/auth/auth_service.dart';
 
@@ -70,7 +71,8 @@ class _LoginScreenState extends State<LoginScreen> {
       if (user != null) {
         log("User Logged In");
         await _saveUserEmailPassword();
-        Navigator.pushNamed(context, '/home'); // Assuming you have a home route
+        Navigator.pushNamed(context,
+            '/premium_offer'); // Navigate to PremiumOfferScreen on successful login
       }
     } on FirebaseAuthException catch (e) {
       setState(() {
