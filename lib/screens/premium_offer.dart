@@ -53,10 +53,10 @@ class PremiumOfferScreenState extends State<PremiumOfferScreen> {
               ),
               // Spacer(),
               SizedBox(
-                height: 72,
+                height: 170,
               ),
               SingleChildScrollView(
-                child:   Column(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
@@ -70,9 +70,7 @@ class PremiumOfferScreenState extends State<PremiumOfferScreen> {
                         height: 0.8,
                       ),
                     ),
-                    SizedBox(
-                      height: 8
-                    ),
+                    SizedBox(height: 8),
                     Text(
                       'Discover the best features\nMedscape can offer to you!',
                       textAlign: TextAlign.center,
@@ -83,9 +81,7 @@ class PremiumOfferScreenState extends State<PremiumOfferScreen> {
                         color: white,
                       ),
                     ),
-                    SizedBox(
-                      height: 10
-                    ),
+                    SizedBox(height: 10),
                     // slideable cards here
                     SizedBox(
                       height: 128,
@@ -169,20 +165,17 @@ class PremiumOfferScreenState extends State<PremiumOfferScreen> {
                           height: 8.0,
                           width: _currentPage == index ? 24.0 : 6.0,
                           decoration: BoxDecoration(
-                            color: _currentPage == index ? Colors.blue : Colors.grey,
+                            color: _currentPage == index
+                                ? Colors.blue
+                                : Colors.grey,
                             borderRadius: BorderRadius.circular(12),
                           ),
                         );
                       }),
                     ),
-                    SizedBox(
-                      height: 10
-                    ),
+                    SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: (){
-
-                      },
-
+                      onPressed: () {},
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -213,9 +206,8 @@ class PremiumOfferScreenState extends State<PremiumOfferScreen> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-
+                        Navigator.pushReplacementNamed(context, '/home');
                       },
-
                       child: Text('Continue without premium'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: black,
@@ -225,7 +217,7 @@ class PremiumOfferScreenState extends State<PremiumOfferScreen> {
                   ],
                 ),
               ),
-              // Spacer(), 
+              // Spacer(),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
