@@ -33,7 +33,7 @@ class PremiumOfferScreenState extends State<PremiumOfferScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: black,
+      backgroundColor: grey,
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Center(
@@ -165,9 +165,7 @@ class PremiumOfferScreenState extends State<PremiumOfferScreen> {
                           height: 8.0,
                           width: _currentPage == index ? 24.0 : 6.0,
                           decoration: BoxDecoration(
-                            color: _currentPage == index
-                                ? Colors.blue
-                                : Colors.grey,
+                            color: _currentPage == index ? teal : Colors.grey,
                             borderRadius: BorderRadius.circular(12),
                           ),
                         );
@@ -184,9 +182,9 @@ class PremiumOfferScreenState extends State<PremiumOfferScreen> {
                             style: TextStyle(
                               fontFamily: 'SF Pro Display',
                               fontSize: 20,
-                              color: black,
                               fontWeight: FontWeight.bold,
                               height: 0.0,
+                              color: grey,
                             ),
                           ),
                           Text(
@@ -194,14 +192,14 @@ class PremiumOfferScreenState extends State<PremiumOfferScreen> {
                             style: TextStyle(
                               fontFamily: 'SF Pro Display',
                               fontSize: 12,
-                              color: black,
+                              color: grey,
                             ),
                           ),
                         ],
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: black,
+                        backgroundColor: teal,
+                        // foregroundColor: black,
                       ),
                     ),
                     ElevatedButton(
@@ -210,8 +208,8 @@ class PremiumOfferScreenState extends State<PremiumOfferScreen> {
                       },
                       child: Text('Continue without premium'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: black,
-                        foregroundColor: Colors.blue,
+                        backgroundColor: grey,
+                        foregroundColor: teal,
                       ),
                     ),
                   ],

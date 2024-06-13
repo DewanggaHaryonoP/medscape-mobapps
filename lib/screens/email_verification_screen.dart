@@ -150,7 +150,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: grey,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -242,7 +242,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 child: Text(
                   'Resend Email Verification',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: grey,
                     fontSize: 16,
                   ),
                 ),
@@ -266,7 +266,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 child: Text(
                   'Back to log in',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: grey,
                     fontSize: 16,
                   ),
                 ),
