@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'screens/email_verification_screen.dart';
+import 'screens/ArticlesPage.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(Articles());
 }
 
-class MyApp extends StatelessWidget {
+class Articles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Medscape',
+      title: 'News App',
       theme: ThemeData(
-        primarySwatch: Colors.teal,
+        primarySwatch: Colors.blue,
       ),
-      home: EmailVerificationScreen(emailAddress: 'example@example.com'),
+      home: ArticlesPage(),
     );
   }
 }
