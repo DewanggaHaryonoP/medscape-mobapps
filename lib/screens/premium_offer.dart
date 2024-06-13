@@ -96,7 +96,8 @@ class PremiumOfferScreenState extends State<PremiumOfferScreen> {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Image.asset('icons/unlock1.png', height: 48),
+                              Image.asset('assets/icons/unlock1.png',
+                                  height: 48),
                               Text(
                                 textAlign: TextAlign.center,
                                 'Unlock all content',
@@ -111,7 +112,8 @@ class PremiumOfferScreenState extends State<PremiumOfferScreen> {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Image.asset('icons/recent1.png', height: 48),
+                              Image.asset('assets/icons/recent1.png',
+                                  height: 48),
                               Text(
                                 textAlign: TextAlign.center,
                                 'Latest news and expert\nperspectives',
@@ -126,7 +128,7 @@ class PremiumOfferScreenState extends State<PremiumOfferScreen> {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Image.asset('icons/info1.png', height: 48),
+                              Image.asset('assets/icons/info1.png', height: 48),
                               Text(
                                 textAlign: TextAlign.center,
                                 'Essential info about drugs, diseases,\nand medical tools',
@@ -141,7 +143,8 @@ class PremiumOfferScreenState extends State<PremiumOfferScreen> {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Image.asset('icons/roundcast1.png', height: 48),
+                              Image.asset('assets/icons/roundcast1.png',
+                                  height: 48),
                               Text(
                                 textAlign: TextAlign.center,
                                 'Free CME and professional\nonline education',
