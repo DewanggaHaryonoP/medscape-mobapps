@@ -73,15 +73,7 @@ class DrugScreenState extends State<DrugsScreen> {
       body: ListView.builder(
         itemCount: 10,
         itemBuilder: (context, index) {
-          return Column(
-            children: [
-              DrugsItem(),
-              Divider(
-                color: Colors.grey,
-                thickness: 1.5,
-              ),
-            ],
-          );
+          return DrugsItem();
         },
       ),
       bottomNavigationBar: Container(
@@ -130,11 +122,6 @@ class DrugScreenState extends State<DrugsScreen> {
               context,
               MaterialPageRoute(builder: (context) => ArticlesPage()),
             );
-          } else if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => DrugsScreen()),
-            );
           }
         },
         child: Container(
@@ -179,54 +166,14 @@ class DrugsItem extends StatelessWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Drugs name goes here..',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: bodyFont,
-                              fontSize: 16),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Drug description or additional info here.',
-                          style: TextStyle(
-                              color: Colors.grey,
-                              fontFamily: bodyFont,
-                              fontSize: 12),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 100,
-                  width: 100,
-                  color: Colors.grey, // Placeholder for the image
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Icon(Icons.bookmark_border, color: teal),
-                  SizedBox(width: 10),
-                  Icon(Icons.share, color: teal),
-                ],
-              ),
+            Text(
+              'Drugs name goes here..',
+              style: TextStyle(
+                  color: Colors.white, fontFamily: bodyFont, fontSize: 16),
             ),
           ],
         ),
