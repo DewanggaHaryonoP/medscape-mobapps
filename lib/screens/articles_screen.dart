@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'home_screen.dart'; // Import the HomeScreen
-import 'article_detail.dart'; // Import the ArticleDetailPage
-import '../global_variables.dart'; // Ensure the global variables file is imported
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'home_screen.dart';
+import 'article_detail.dart';
+import '../global_variables.dart';
 
 class ArticlesPage extends StatefulWidget {
   @override
@@ -13,12 +14,12 @@ class _ArticlesPageState extends State<ArticlesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: darkBlue, // Changed from Colors.teal to darkBlue
+        backgroundColor: darkBlue,
         toolbarHeight: 80.0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Handle back button press
+            Navigator.pop(context);
           },
         ),
         title: Container(
@@ -40,37 +41,47 @@ class _ArticlesPageState extends State<ArticlesPage> {
         ),
       ),
       backgroundColor: Colors.black,
-      body: ListView.builder(
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return NewsItem();
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('articles').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+                child: Text('Error: ${snapshot.error}',
+                    style: TextStyle(color: Colors.white)));
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          final articles = snapshot.data!.docs;
+          return ListView.builder(
+            itemCount: articles.length,
+            itemBuilder: (context, index) {
+              return NewsItem(
+                articleId: articles[index].id,
+                title: articles[index]['title'],
+                author: articles[index]['author'],
+                date: articles[index]['date'],
+              );
+            },
+          );
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-              color: Colors.cyan,
-            ),
+            icon: Icon(Icons.home, color: Colors.cyan),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.article,
-              color: Colors.cyan,
-            ),
+            icon: Icon(Icons.article, color: Colors.cyan),
             label: 'Article',
           ),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.local_hospital,
-              color: Colors.cyan,
-            ),
+            icon: Icon(Icons.local_hospital, color: Colors.cyan),
             label: 'Drugs',
           ),
         ],
-        backgroundColor: darkBlue, // Changed from Colors.teal to darkBlue
+        backgroundColor: darkBlue,
         currentIndex: 1,
         selectedItemColor: Colors.white,
         onTap: (index) {
@@ -87,13 +98,27 @@ class _ArticlesPageState extends State<ArticlesPage> {
 }
 
 class NewsItem extends StatelessWidget {
+  final String articleId;
+  final String title;
+  final String author;
+  final String date;
+
+  NewsItem({
+    required this.articleId,
+    required this.title,
+    required this.author,
+    required this.date,
+  });
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ArticleDetailPage()),
+          MaterialPageRoute(
+            builder: (context) => ArticleDetailPage(articleId: articleId),
+          ),
         );
       },
       child: Card(
@@ -106,15 +131,15 @@ class NewsItem extends StatelessWidget {
             fit: BoxFit.cover,
           ),
           title: Text(
-            'News title goes here like this',
+            title,
             style: TextStyle(color: Colors.white),
           ),
           subtitle: Text(
-            'Medscape Medical News | 4 June 2024',
+            '$author | $date',
             style: TextStyle(color: Colors.grey),
           ),
           trailing: Wrap(
-            spacing: 12, // space between two icons
+            spacing: 12,
             children: <Widget>[
               Icon(Icons.bookmark_border, color: Colors.white),
               Icon(Icons.share, color: Colors.white),
