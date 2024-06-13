@@ -9,6 +9,63 @@ class ArticlesPage extends StatefulWidget {
 }
 
 class _ArticlesPageState extends State<ArticlesPage> {
+  TextEditingController _searchController = TextEditingController();
+  String searchQuery = "";
+  ScrollController _scrollController = ScrollController();
+  List<DocumentSnapshot> articles = [];
+  bool isLoading = false;
+  bool hasMore = true;
+  int documentLimit = 5;
+  DocumentSnapshot? lastDocument;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _loadMoreArticles();
+      }
+    });
+    _loadMoreArticles();
+  }
+
+  Future<void> _loadMoreArticles() async {
+    if (!isLoading && hasMore) {
+      setState(() {
+        isLoading = true;
+      });
+
+      QuerySnapshot querySnapshot;
+      if (lastDocument == null) {
+        querySnapshot = await FirebaseFirestore.instance
+            .collection('articles')
+            .orderBy('date')
+            .limit(documentLimit)
+            .get();
+      } else {
+        querySnapshot = await FirebaseFirestore.instance
+            .collection('articles')
+            .orderBy('date')
+            .startAfterDocument(lastDocument!)
+            .limit(documentLimit)
+            .get();
+      }
+
+      if (querySnapshot.docs.length < documentLimit) {
+        hasMore = false;
+      }
+
+      lastDocument =
+          querySnapshot.docs.isNotEmpty ? querySnapshot.docs.last : null;
+      articles.addAll(querySnapshot.docs);
+
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +96,12 @@ class _ArticlesPageState extends State<ArticlesPage> {
                   ],
                 ),
                 child: TextField(
+                  controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      searchQuery = value.toLowerCase();
+                    });
+                  },
                   style: TextStyle(color: grey, fontFamily: bodyFont),
                   decoration: InputDecoration(
                     hintText: 'Search Article..',
@@ -56,44 +119,69 @@ class _ArticlesPageState extends State<ArticlesPage> {
         ),
       ),
       backgroundColor: grey,
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('articles').snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                'Error: ${snapshot.error}',
-                style: TextStyle(color: Colors.white),
-              ),
-            );
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification scrollInfo) {
+          if (!isLoading &&
+              scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+            _loadMoreArticles();
+            return true;
           }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          final articles = snapshot.data!.docs;
-
-          return ListView.builder(
-            itemCount: articles.length,
-            itemBuilder: (context, index) {
-              return Column(
-                children: [
-                  NewsItem(
-                    articleId: articles[index].id,
-                    title: articles[index]['title'],
-                    author: articles[index]['author'],
-                    date: articles[index]['date'],
-                  ),
-                  Divider(
-                    color: Colors.grey,
-                    thickness: 1.5,
-                  ),
-                ],
-              );
-            },
-          );
+          return false;
         },
+        child: ListView.builder(
+          controller: _scrollController,
+          itemCount: articles.length + (isLoading ? 1 : 0),
+          itemBuilder: (context, index) {
+            if (index == articles.length) {
+              return _buildProgressIndicator();
+            } else {
+              final filteredArticle = articles[index];
+              final title = filteredArticle['title'].toString().toLowerCase();
+              final author = filteredArticle['author'].toString().toLowerCase();
+              final date = filteredArticle['date'].toString().toLowerCase();
+
+              if (searchQuery.isEmpty ||
+                  title.contains(searchQuery) ||
+                  author.contains(searchQuery) ||
+                  date.contains(searchQuery)) {
+                return Column(
+                  children: [
+                    NewsItem(
+                      articleId: filteredArticle.id,
+                      title: filteredArticle['title'],
+                      author: filteredArticle['author'],
+                      date: filteredArticle['date'],
+                    ),
+                    Divider(
+                      color: Colors.grey,
+                      thickness: 1.5,
+                    ),
+                  ],
+                );
+              } else {
+                return SizedBox.shrink();
+              }
+            }
+          },
+        ),
       ),
     );
+  }
+
+  Widget _buildProgressIndicator() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 }
 
