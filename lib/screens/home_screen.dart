@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../global_variables.dart';
 import 'articles_screen.dart'; // Import the ArticlesPage
+import 'drugs_screen.dart'; // Import the DrugsScreen
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -25,6 +26,11 @@ class _HomeScreenState extends State<HomeScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => ArticlesPage()),
+      );
+    } else if (index == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => DrugsScreen()),
       );
     }
   }
@@ -172,17 +178,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                         .grey, // Placeholder for the image
                                   ),
                                 ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Icon(Icons.bookmark_border, color: teal),
-                                    SizedBox(width: 10),
-                                    Icon(Icons.share, color: teal),
-                                  ],
-                                ),
                               ),
                             ],
                           ),

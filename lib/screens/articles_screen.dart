@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'home_screen.dart';
 import 'article_detail.dart';
+import 'drugs_screen.dart';
 import '../global_variables.dart';
 
 class ArticlesPage extends StatefulWidget {
@@ -134,6 +135,11 @@ class _ArticlesPageState extends State<ArticlesPage> {
               context,
               MaterialPageRoute(builder: (context) => HomeScreen()),
             );
+          } else if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DrugsScreen()),
+            );
           }
         },
         child: Container(
@@ -192,7 +198,7 @@ class NewsItem extends StatelessWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
