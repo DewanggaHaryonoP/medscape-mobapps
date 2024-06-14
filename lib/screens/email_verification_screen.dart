@@ -232,7 +232,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
+                  backgroundColor: teal,
                   padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(32),
@@ -253,7 +253,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
+                  backgroundColor: teal,
                   padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(32),
@@ -266,7 +266,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 child: Text(
                   'Back to log in',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: grey,
                     fontSize: 16,
                   ),
                 ),
